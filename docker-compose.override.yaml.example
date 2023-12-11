@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+  database:
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres_password
+      - POSTGRES_USER=postgres_user
+      - POSTGRES_DB=database
+
+  pgadmin:
+    ports:
+      - 80:80
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=user@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+
+  backend:
+    ports:
+      - 3000:3000
+
+  frontend:
+    ports:
+      - 4000:3000

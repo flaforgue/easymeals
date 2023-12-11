@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  database:
+    image: postgres:16-alpine
+    volumes:
+      - ./database:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:7.8
+    restart: always
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+  backend:
+    build: ./backend
+    restart: always
+    working_dir: /srv/node
+    volumes:
+      - ./backend:/srv/node:rw,cached
+    command: /bin/sh -c 'yarn start:dev'
+
+  frontend:
+    build: ./frontend
+    restart: always
+    working_dir: /srv/node
+    volumes:
+      - ./frontend:/srv/node:rw,cached
+    command: /bin/sh -c 'yarn dev'
+
+volumes:
+  pgadmin-data:

@@ -1,6 +1,7 @@
 'use client'
 
 import Link from "next/link";
+import { UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 
 type Route = {
@@ -43,6 +44,7 @@ export default function Sidenav() {
       <ul className="space-y-2 font-medium">
         {links}
       </ul>
+      <UserButton afterSignOutUrl="/"/>
     </div>
   )
 }

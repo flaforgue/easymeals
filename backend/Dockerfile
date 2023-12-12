@@ -6,4 +6,7 @@ COPY package.json ./
 COPY yarn.lock ./
 RUN yarn install --frozen-lockfile
 
+EXPOSE 3000
+ENV PORT 3000
+
 COPY . .

@@ -1,4 +1,4 @@
-export default function Recipes() {
+export default function Menus() {
   return (
     <main>
       On the menu

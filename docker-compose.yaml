@@ -18,6 +18,8 @@ services:
     working_dir: /srv/node
     volumes:
       - ./backend:/srv/node:rw,cached
+    networks:
+      - default
     command: /bin/sh -c 'yarn start:dev'
 
   frontend:
@@ -26,7 +28,12 @@ services:
     working_dir: /srv/node
     volumes:
       - ./frontend:/srv/node:rw,cached
+    networks:
+      - default
     command: /bin/sh -c 'yarn dev'
 
 volumes:
   pgadmin-data:
+
+networks:
+  default:

@@ -1,6 +1,6 @@
-import { ClerkProvider } from '@clerk/nextjs'
-import type { Metadata } from 'next'
-import '../styles/globals.css'
+import { ClerkProvider } from '@clerk/nextjs';
+import type { Metadata } from 'next';
+import '../styles/globals.css';
 
 export const metadata: Metadata = {
   title: 'Lemonpie',
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
   },
-}
+};
 
 export default function RootLayout({
   children,
@@ -21,5 +21,5 @@ export default function RootLayout({
         <body>{children}</body>
       </html>
     </ClerkProvider>
-  )
+  );
 }

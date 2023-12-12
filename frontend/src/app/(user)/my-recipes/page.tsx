@@ -3,5 +3,5 @@ export default function Recipes() {
     <main>
       Recipes
     </main>
-  )
+  );
 }

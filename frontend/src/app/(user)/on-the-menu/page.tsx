@@ -3,5 +3,5 @@ export default function Recipes() {
     <main>
       On the menu
     </main>
-  )
+  );
 }

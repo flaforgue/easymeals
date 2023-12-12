@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import Link from "next/link";
 import { UserButton } from "@clerk/nextjs";
@@ -10,7 +10,7 @@ type Route = {
 }
 
 export default function Sidenav() {
-  const currentPathname = usePathname()
+  const currentPathname = usePathname();
   const routes: Route[] = [
     {
       name: 'Home',
@@ -46,5 +46,5 @@ export default function Sidenav() {
       </ul>
       <UserButton afterSignOutUrl="/"/>
     </div>
-  )
+  );
 }

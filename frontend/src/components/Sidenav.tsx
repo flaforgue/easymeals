@@ -1,7 +1,6 @@
 'use client';
 
 import Link from "next/link";
-import { UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 
 type Route = {
@@ -18,11 +17,15 @@ export default function Sidenav() {
     },
     {
       name: 'My recipes',
-      pathname: '/my-recipes',
+      pathname: '/recipes',
     },
     {
       name: 'On the menu',
-      pathname: '/on-the-menu',
+      pathname: '/menus',
+    },
+    {
+      name: 'Settings',
+      pathname: '/me',
     },
   ];
 
@@ -43,8 +46,16 @@ export default function Sidenav() {
     <div className="h-full px-3 py-4 overflow-y-auto bg-slate-50">
       <ul className="space-y-2 font-medium">
         {links}
+        <li>
+          <a
+            className="hover:bg-slate-100 flex items-center p-2 text-gray-900 rounded-lg"
+            href="/api/auth/logout"
+          >
+            <span className="ms-3">Logout</span>
+          </a>
+        </li>
       </ul>
-      <UserButton afterSignOutUrl="/"/>
+
     </div>
   );
 }

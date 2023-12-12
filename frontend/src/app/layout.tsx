@@ -1,6 +1,6 @@
-import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
 import '../styles/globals.css';
+import { UserProvider } from '@auth0/nextjs-auth0/client';
 
 export const metadata: Metadata = {
   title: 'Lemonpie',
@@ -16,10 +16,10 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en">
+    <html lang="en">
+      <UserProvider>
         <body>{children}</body>
-      </html>
-    </ClerkProvider>
+      </UserProvider>
+    </html>
   );
 }

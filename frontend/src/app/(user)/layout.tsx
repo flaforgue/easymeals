@@ -6,7 +6,7 @@ export default function AppLayout({
   children: React.ReactNode
 }) {
   return (
-    <section className="min-w-screen bg-gray-200">
+    <section className="min-w-screen">
       <aside className="fixed top-0 left-0 w-64 h-screen">
         <Sidenav />
       </aside>

@@ -1,10 +1,12 @@
-import { Controller, Get, HttpCode } from '@nestjs/common';
+import { Controller, Get, HttpCode, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('recipes')
 export class RecipeController {
   constructor() {}
 
   @Get('/')
+  @UseGuards(AuthGuard('jwt'))
   @HttpCode(200)
   async get() {
     return [

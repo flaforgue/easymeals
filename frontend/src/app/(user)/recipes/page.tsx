@@ -1,3 +1,5 @@
+import { getAccessToken } from '@auth0/nextjs-auth0';
+import { Suspense } from 'react';
 import Image from 'next/image';
 
 type Recipe = {
@@ -6,22 +8,29 @@ type Recipe = {
   imageUrl: string;
 }
 
-async function getRecipes(): Promise<Recipe[]> {
-  const res = await fetch('http://backend:3000/recipes', {
-    method: 'GET',
-    headers : { 
-      'Accept': 'application/json'
-     }
-  });
-
-  if (!res.ok) {
-    throw new Error(`Failed to fetch in ${getRecipes.name}`);
-  }
- 
-  return res.json();
-}
-
+export const dynamic = 'force-dynamic';
 export default async function Recipes() {
+  async function getRecipes(): Promise<Recipe[]> {
+    const { accessToken } = await getAccessToken();
+    console.log('accessToken', accessToken);
+    const res = await fetch('http://backend:3000/recipes', {
+      cache: 'no-store',
+      method: 'GET',
+      headers : { 
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+    });
+  
+    if (!res.ok) {
+      throw new Error(
+        `Failed to fetch in ${getRecipes.name} (received ${res.status} ${res.statusText})`,
+      );
+    }
+   
+    return res.json();
+  }
+
   const recipes = await getRecipes();
   const recipesList = recipes.map(
     (recipe) => (
@@ -31,7 +40,6 @@ export default async function Recipes() {
       </div>
     ),
   );
-
 
   return (
     <section>

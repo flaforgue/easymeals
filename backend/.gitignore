@@ -1,5 +1,6 @@
 # local env files
-.env*.local
+.env
+.env.local
 
 # compiled output
 /dist

@@ -1,8 +1,7 @@
-import { getAccessToken } from '@auth0/nextjs-auth0';
-import { Suspense } from 'react';
 import Image from 'next/image';
+import { getAccessToken } from '@auth0/nextjs-auth0';
 
-type Recipe = {
+interface Recipe {
   id: number;
   name: string;
   imageUrl: string;
@@ -12,23 +11,22 @@ export const dynamic = 'force-dynamic';
 export default async function Recipes() {
   async function getRecipes(): Promise<Recipe[]> {
     const { accessToken } = await getAccessToken();
-    console.log('accessToken', accessToken);
     const res = await fetch('http://backend:3000/recipes', {
       cache: 'no-store',
       method: 'GET',
-      headers : { 
+      headers : {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
+        'Authorization': `Bearer ${accessToken}`,
       },
     });
-  
+
     if (!res.ok) {
       throw new Error(
         `Failed to fetch in ${getRecipes.name} (received ${res.status} ${res.statusText})`,
       );
     }
-   
-    return res.json();
+
+    return res.json() as Promise<Recipe[]>;
   }
 
   const recipes = await getRecipes();

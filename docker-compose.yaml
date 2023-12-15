@@ -11,25 +11,69 @@ services:
     restart: always
     volumes:
       - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - database
+
+  root:
+    image: node:21
+    working_dir: /srv/node
+    volumes:
+      - .:/srv/node:rw,cached
+    command: /bin/sh -c 'yarn install --frozen-lockfile'
 
   backend:
-    build: ./backend
+    image: node:21
     restart: always
-    working_dir: /srv/node
+    working_dir: /srv/node/application/backend
     volumes:
-      - ./backend:/srv/node:rw,cached
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
+      - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      - ./application/shared:/srv/node/application/shared:ro,cached
+      - ./application/backend:/srv/node/application/backend:rw,cached
     networks:
       - default
-    command: /bin/sh -c 'yarn start:dev'
+    depends_on:
+      database:
+        condition: service_started
+      shared:
+        condition: service_started
+      root:
+        condition: service_completed_successfully
+    command: /bin/sh -c 'yarn dev'
 
   frontend:
-    build: ./frontend
+    image: node:21
     restart: always
-    working_dir: /srv/node
+    working_dir: /srv/node/application/frontend
     volumes:
-      - ./frontend:/srv/node:rw,cached
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
+      - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      - ./application/frontend:/srv/node/application/frontend:rw,cached
     networks:
       - default
+    depends_on:
+      backend:
+        condition: service_started
+      shared:
+        condition: service_started
+      root:
+        condition: service_completed_successfully
+    command: /bin/sh -c 'yarn dev'
+
+  shared:
+    image: node:21
+    restart: always
+    working_dir: /srv/node/application/shared
+    volumes:
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
+      - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      - ./application/shared:/srv/node/application/shared:rw,cached
+    depends_on:
+      root:
+        condition: service_completed_successfully
     command: /bin/sh -c 'yarn dev'
 
 volumes:

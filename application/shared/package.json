@@ -1,0 +1,18 @@
+{
+  "name": "@lemonpie/shared",
+  "version": "0.0.1",
+  "private": true,
+  "types": "dist/index.d.ts",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "rm -Rf ./dist && tsc",
+    "lint": "tsc --noEmit && eslint \"src/**/*.ts\" --fix"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  }
+}

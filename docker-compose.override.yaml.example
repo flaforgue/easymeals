@@ -17,9 +17,13 @@ services:
       - PGADMIN_DEFAULT_PASSWORD=password
 
   backend:
+    environment:
+      - PORT=3000
     ports:
       - 3000:3000
 
   frontend:
+    environment:
+      - PORT=4000
     ports:
-      - 4000:3000
+      - 4000:4000

@@ -1,3 +1,4 @@
 docker-compose.override.yaml
 /database/
 .DS_Store
+node_modules

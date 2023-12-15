@@ -2,4 +2,17 @@ lint:
 	docker-compose run root yarn lint
 
 uninstall:
-	find . \( -name "node_modules" -o -name "dist" -o -name ".next" \) -type d -prune -exec rm -rf '{}' +
+	rm -rf \
+		node_modules \
+		application/frontend/node_modules \
+		application/frontend/.next \
+		application/backend/node_modules \
+		application/backend/dist \
+		application/shared/node_modules \
+		application/shared/dist \
+	&& rm -f \
+		tsconfig.tsbuildinfo \
+		application/frontend/tsconfig.tsbuildinfo \
+		application/backend/tsconfig.tsbuildinfo \
+		application/shared/tsconfig.tsbuildinfo \
+	

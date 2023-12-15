@@ -1,6 +1,9 @@
 lint:
 	docker-compose run root yarn lint
 
+install:
+	docker-compose run root yarn
+
 uninstall:
 	rm -rf \
 		node_modules \

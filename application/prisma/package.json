@@ -1,0 +1,12 @@
+{
+  "name": "@lemonpie/prisma",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "lint": "prisma format",
+    "migrate": "prisma migrate dev && prisma generate"
+  },
+  "devDependencies": {
+    "prisma": "^5.7.0"
+  }
+}

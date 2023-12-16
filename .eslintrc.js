@@ -63,13 +63,32 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': ['warn'],
     '@typescript-eslint/explicit-member-accessibility': ['error'],
+    '@typescript-eslint/strict-boolean-expressions': 'error',
     '@typescript-eslint/naming-convention': [
       'error',
       {
-        selector: 'memberLike',
-        modifiers: ['private'],
+        selector: 'default',
         format: ['camelCase'],
-        leadingUnderscore: 'require',
+        leadingUnderscore: 'forbid',
+        trailingUnderscore: 'forbid',
+      },
+      {
+        selector: 'variable',
+        format: ['camelCase', 'UPPER_CASE'],
+        leadingUnderscore: 'forbid',
+        trailingUnderscore: 'forbid',
+      },
+      {
+        selector: 'typeLike',
+        format: ['PascalCase'],
+        leadingUnderscore: 'forbid',
+        trailingUnderscore: 'forbid',
+      },
+      {
+        selector: 'variable',
+        types: ['boolean'],
+        format: ['PascalCase'],
+        prefix: ['is', 'should', 'has', 'can', 'did', 'will'],
       },
     ],
 

@@ -10,8 +10,10 @@ export default async function Recipes() {
       cache: 'no-store',
       method: 'GET',
       headers : {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        Accept: 'application/json',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        Authorization: `Bearer ${accessToken}`,
       },
     });
 
@@ -29,7 +31,10 @@ export default async function Recipes() {
     (recipe: Recipe) => (
       <div key={recipe.id}>
         <p>{recipe.name}</p>
-        <Image src={recipe.imageUrl} width={100} height={100} alt={recipe.name} />
+        {
+          recipe.imageUrl !== null &&
+          <Image src={recipe.imageUrl} width={100} height={100} alt={recipe.name} />
+        }
       </div>
     ),
   );

@@ -1,10 +1,13 @@
 version: '3'
 
 services:
-  database:
+  postgres:
     image: postgres:16-alpine
+    restart: always
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - network-database
 
   pgadmin:
     image: dpage/pgadmin4:7.8
@@ -12,7 +15,27 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     depends_on:
-      - database
+      - postgres
+    networks:
+      - network-database
+
+  prisma:
+    image: node:21
+    working_dir: /srv/node
+    volumes:
+      # Read only
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      # Read write
+      - ./application/prisma:/srv/node:rw,cached
+      - ./node_modules/.prisma/client:/srv/node/node_modules/.prisma/client:rw,cached
+    depends_on:
+      root:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_started
+    networks:
+      - network-database
+    command: /bin/sh -c 'yarn migrate'
 
   root:
     image: node:21
@@ -26,20 +49,25 @@ services:
     restart: always
     working_dir: /srv/node/application/backend
     volumes:
+      # Read only
       - ./node_modules:/srv/node/node_modules:ro,cached
       - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
       - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
       - ./application/shared:/srv/node/application/shared:ro,cached
+      # Read write
       - ./application/backend:/srv/node/application/backend:rw,cached
     networks:
-      - default
+      - network-database
+      - network-http
     depends_on:
-      database:
+      root:
+        condition: service_completed_successfully
+      prisma:
+        condition: service_completed_successfully
+      postgres:
         condition: service_started
       shared:
         condition: service_started
-      root:
-        condition: service_completed_successfully
     command: /bin/sh -c 'yarn dev'
 
   frontend:
@@ -47,19 +75,21 @@ services:
     restart: always
     working_dir: /srv/node/application/frontend
     volumes:
+      # Read only
       - ./node_modules:/srv/node/node_modules:ro,cached
       - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
       - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      # Read write
       - ./application/frontend:/srv/node/application/frontend:rw,cached
     networks:
-      - default
+      - network-http
     depends_on:
+      root:
+        condition: service_completed_successfully
       backend:
         condition: service_started
       shared:
         condition: service_started
-      root:
-        condition: service_completed_successfully
     command: /bin/sh -c 'yarn dev'
 
   shared:
@@ -67,17 +97,21 @@ services:
     restart: always
     working_dir: /srv/node/application/shared
     volumes:
+      # Read only
       - ./node_modules:/srv/node/node_modules:ro,cached
       - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
       - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      # Read write
       - ./application/shared:/srv/node/application/shared:rw,cached
     depends_on:
       root:
         condition: service_completed_successfully
     command: /bin/sh -c 'yarn dev'
 
-volumes:
-  pgadmin-data:
-
 networks:
-  default:
+  network-database:
+  network-http:
+
+volumes:
+  postgres-data:
+  pgadmin-data:

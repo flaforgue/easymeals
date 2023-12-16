@@ -19,3 +19,5 @@ uninstall:
 		application/backend/tsconfig.tsbuildinfo \
 		application/shared/tsconfig.tsbuildinfo \
 	
+migrate:
+	docker-compose run prisma yarn migrate

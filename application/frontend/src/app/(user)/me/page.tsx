@@ -9,10 +9,10 @@ interface User {
 
 export default async function ProfileServer() {
   const session = await getSession();
-  const user: User = session?.user as User;
+  const user = (session?.user as User|undefined) ?? null;
 
   return (
-    user && (
+    user !== null && (
       <div>
         <Image
           src={user.picture}

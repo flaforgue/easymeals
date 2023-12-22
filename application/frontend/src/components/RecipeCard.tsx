@@ -2,8 +2,8 @@
 
 import DeleteButton from '@/components/DeleteButton';
 import ImageFilling from '@/components/ImageFilling';
-import { Recipe } from '@lemonpie/shared';
 import Link from 'next/link';
+import { Recipe } from '@lemonpie/shared';
 
 interface RecipeCardProps {
   recipe: Recipe;
@@ -23,7 +23,7 @@ export default function RecipeCard({
         <div className="text-lg mb-2">{recipe.name}</div>
       </div>
       <div className="px-4 pt-2 pb-2 flex justify-end	">
-        <Link href={`/recipes/${recipe.id}/delete`}>
+        <Link href={`/recipes/${recipe.id}/delete`} scroll={false}>
           <DeleteButton />
         </Link>
       </div>

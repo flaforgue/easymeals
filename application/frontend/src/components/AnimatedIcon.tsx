@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import Image from 'next/image';
 import LottiePlayer from './LottiePlayer';
-import { Player } from '@lottiefiles/react-lottie-player';
+import type { Player } from '@lottiefiles/react-lottie-player';
 
 type AnimatedIconName = 'trash';
 interface AnimatedIconProps {
@@ -25,25 +25,27 @@ export default function AnimatedIcon({
     }
   });
 
+  const staticIcon = (
+    <Image src={`/icons/${icon}.svg`}
+      height={size}
+      width={size}
+      alt="trash"
+    />
+  );
+
+  const animatedIcon = (
+    <LottiePlayer
+      src={`/lotties/${icon}.json`}
+      autoplay={true}
+      speed={1.5}
+      style={{ height: `${size}px`, width: `${size}px` }}
+    />
+  );
+
   return (
     <>
-      {
-        !isPlaying &&
-          <Image src={`/icons/${icon}.svg`}
-            height={size}
-            width={size}
-            alt="trash"
-          />
-      }
-      {
-        isPlaying &&
-          <LottiePlayer
-            src={`/lotties/${icon}.json`}
-            autoplay={true}
-            speed={1.5}
-            style={{ height: `${size}px`, width: `${size}px` }}
-          />
-      }
+      {!isPlaying && staticIcon}
+      {isPlaying && (animatedIcon ?? staticIcon)}
     </>
   );
 }

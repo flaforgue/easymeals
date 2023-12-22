@@ -12,6 +12,7 @@
   "dependencies": {
     "@lemonpie/shared": "0.0.1",
     "@auth0/nextjs-auth0": "^3.5.0",
+    "@lottiefiles/react-lottie-player": "^3.5.3",
     "install": "^0.13.0",
     "next": "14.0.1",
     "npm": "^10.2.5",

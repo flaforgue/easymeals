@@ -7,7 +7,7 @@ interface User {
   email: string;
 }
 
-export default async function ProfileServer() {
+export default async function Page() {
   const session = await getSession();
   const user = (session?.user as User|undefined) ?? null;
 

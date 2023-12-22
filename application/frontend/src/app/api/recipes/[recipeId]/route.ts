@@ -1,7 +1,7 @@
+import { CacheTag } from '../../cache';
 import { NextApiRequest } from 'next';
 import { getAccessToken } from '@auth0/nextjs-auth0';
-
-// export const dynamic = 'force-dynamic';
+import { revalidateTag } from 'next/cache';
 
 export async function DELETE(
   req: NextApiRequest,
@@ -9,12 +9,15 @@ export async function DELETE(
 ) {
   const { accessToken } = await getAccessToken();
 
-  return fetch(`${process.env.BACKEND_BASE_URL}/recipes/${params.recipeId}`, {
-    // cache: 'no-store',
+  const res = await fetch(`${process.env.BACKEND_BASE_URL}/recipes/${params.recipeId}`, {
     method: 'DELETE',
     headers : {
       Accept: 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
   });
+
+  revalidateTag(CacheTag.Recipes);
+
+  return res;
 }

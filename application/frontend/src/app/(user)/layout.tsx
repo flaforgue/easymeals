@@ -1,13 +1,13 @@
 import { ReactNode } from 'react';
 import Sidenav from '@/components/Sidenav';
 
-interface AppLayoutProps {
+interface LayoutProps {
   children: ReactNode;
 }
 
-export default function AppLayout({
+export default function Layout({
   children,
-}: AppLayoutProps) {
+}: LayoutProps) {
   return (
     <section className="min-w-screen">
       <aside className="fixed top-0 left-0 w-64 h-screen">

@@ -15,3 +15,15 @@ export async function GET() {
     },
   });
 }
+
+export async function POST() {
+  const { accessToken } = await getAccessToken();
+
+  return fetch(`${process.env.BACKEND_BASE_URL}/recipes`, {
+    method: 'POST',
+    headers : {
+      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}

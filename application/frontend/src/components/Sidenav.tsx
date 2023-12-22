@@ -16,12 +16,12 @@ export default function Sidenav() {
       pathname: '/home',
     },
     {
-      name: 'My recipes',
-      pathname: '/recipes',
-    },
-    {
       name: 'On the menu',
       pathname: '/menus',
+    },
+    {
+      name: 'My recipes',
+      pathname: '/recipes',
     },
     {
       name: 'Settings',

@@ -15,7 +15,13 @@ module.exports = {
     'max-len': [
       'warn',
       {
-        code: 100,
+        code: 120,
+        ignoreComments: true,
+        ignoreTrailingComments: true,
+        ignoreUrls: true,
+        ignoreStrings: true,
+        ignoreTemplateLiterals: true,
+        ignoreRegExpLiterals: true,
       },
     ],
     'space-before-function-paren': [

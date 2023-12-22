@@ -4,6 +4,16 @@ module.exports = {
     project: 'tsconfig.json',
   },
   rules: {
+    'react/jsx-max-props-per-line': [1, { maximum: { single: 3, multi: 1 } }],
+    '@typescript-eslint/no-misused-promises': [
+      'error',
+      {
+        checksVoidReturn: {
+          // arguments: false,
+          attributes: false,
+        },
+      },
+    ],
     '@typescript-eslint/naming-convention': [
       'error',
       {
@@ -24,7 +34,7 @@ module.exports = {
       },
       {
         selector: 'variable',
-        format: ['camelCase', 'UPPER_CASE'],
+        format: ['PascalCase', 'camelCase', 'UPPER_CASE'],
         leadingUnderscore: 'forbid',
         trailingUnderscore: 'forbid',
       },

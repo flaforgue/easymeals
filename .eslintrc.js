@@ -68,6 +68,7 @@ module.exports = {
 
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/no-unused-vars': ['warn'],
+    '@typescript-eslint/no-floating-promises': 'off',
     '@typescript-eslint/explicit-member-accessibility': ['error'],
     '@typescript-eslint/strict-boolean-expressions': 'error',
     '@typescript-eslint/naming-convention': [

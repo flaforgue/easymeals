@@ -1,0 +1,151 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      # Shared module
+      - name: Install shared module dependencies
+        working-directory: application/shared
+        run: npm ci
+      - name: Build shared module
+        working-directory: application/shared
+        run: npm run build
+      # Frontend module
+      - name: Install frontend module dependencies
+        working-directory: application/frontend
+        run: npm ci
+      - name: Build
+        working-directory: application/frontend
+        run: npm run build
+        env:
+          VITE_AUTH0_DOMAIN: ${{ vars.AUTH0_DOMAIN }}
+          VITE_AUTH0_CLIENT_ID: ${{ vars.AUTH0_CLIENT_ID }}
+          VITE_AUTH0_API_AUDIENCE: ${{ vars.AUTH0_API_AUDIENCE }}
+          VITE_BACKEND_BASE_URL: ${{ vars.BACKEND_BASE_URL }}
+      # Deploy
+      - name: Authenticate Google Cloud CLI
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Deploy
+        uses: 'google-github-actions/deploy-appengine@v2'
+        with:
+          working_directory: application/frontend
+          deliverables: app.yaml
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          promote: true
+          version: main
+
+  migrate-database:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: Install prisma module dependencies
+        working-directory: application/prisma
+        run: npm ci
+      - name: Migrate database
+        working-directory: application/prisma
+        run: npm run migrate:prod
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DIRECT_DATABASE_URL: ${{ secrets.DIRECT_DATABASE_URL }}
+
+  deploy-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      # Shared module
+      - name: Install shared module dependencies
+        working-directory: application/shared
+        run: npm ci
+      - name: Build shared module
+        working-directory: application/shared
+        run: npm run build
+      # Prisma module
+      - name: Install prisma module dependencies
+        working-directory: application/prisma
+        run: npm ci
+      - name: Build prisma module
+        working-directory: application/prisma
+        run: npm run build
+      # Backend module
+      - name: Install backend module dependencies
+        working-directory: application/backend
+        run: npm ci
+      - name: Build
+        working-directory: application/backend
+        run: npm run build
+      - name: Copy libquery binary
+        working-directory: application
+        run: cp prisma/client/libquery_engine-debian-openssl-3.0.x.so.node backend/dist/prisma/client/libquery_engine-debian-openssl-3.0.x.so.node
+      # Deploy
+      - name: Authenticate Google Cloud CLI
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Add environment env_variables
+        working-directory: application/backend
+        run: |
+          printf "\nenv_variables:" >> app.yaml
+          printf "\n  AUTH0_API_AUDIENCE: \"$AUTH0_API_AUDIENCE\"" >> app.yaml
+          printf "\n  AUTH0_ISSUER_URL: \"$AUTH0_ISSUER_URL\"" >> app.yaml
+          printf "\n  DATABASE_URL: \"$DATABASE_URL\"" >> app.yaml
+          printf "\n  FRONTEND_BASE_URL: \"$FRONTEND_BASE_URL\"" >> app.yaml
+          printf "\n  USER_CONTENT_UPLOADER_BASE_64_CREDENTIALS: \"$USER_CONTENT_UPLOADER_BASE_64_CREDENTIALS\"" >> app.yaml
+          printf "\n  USER_CONTENT_BUCKET_NAME: \"$USER_CONTENT_BUCKET_NAME\"" >> app.yaml
+        env:
+          AUTH0_API_AUDIENCE: ${{ vars.AUTH0_API_AUDIENCE }}
+          AUTH0_ISSUER_URL: ${{ vars.AUTH0_ISSUER_URL }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FRONTEND_BASE_URL: ${{ vars.FRONTEND_BASE_URL }}
+          USER_CONTENT_UPLOADER_BASE_64_CREDENTIALS: ${{ secrets.USER_CONTENT_UPLOADER_BASE_64_CREDENTIALS }}
+          USER_CONTENT_BUCKET_NAME: ${{ vars.USER_CONTENT_BUCKET_NAME }}
+      - name: Deploy
+        uses: 'google-github-actions/deploy-appengine@v2'
+        with:
+          working_directory: application/backend
+          deliverables: app.yaml
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          promote: true
+          version: main
+
+  deploy-routing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Authenticate Google Cloud CLI
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+      - name: Deploy
+        run: gcloud app deploy dispatch.yaml

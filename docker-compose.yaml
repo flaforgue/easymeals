@@ -1,0 +1,118 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - network-database
+
+  root:
+    image: node:20
+    working_dir: /srv/node
+    volumes:
+      - .:/srv/node:rw,cached
+    command: /bin/sh -c 'npm ci'
+
+  backend:
+    image: node:20
+    restart: always
+    working_dir: /srv/node/application/backend
+    volumes:
+      # Read only
+      - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
+      - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      - ./application/shared:/srv/node/application/shared:ro,cached
+      - ./application/prisma:/srv/node/application/prisma:ro,cached
+      - ./.prettierrc:/srv/node/application/backend/.prettierrc:ro,cached
+      # Read write
+      - ./application/backend:/srv/node/application/backend:rw,cached
+    networks:
+      - network-database
+      - network-http
+    depends_on:
+      shared:
+        condition: service_started
+      prisma:
+        condition: service_started
+    command: /bin/sh -c 'npm run dev'
+
+  frontend:
+    image: node:20
+    restart: always
+    working_dir: /srv/node/application/frontend
+    volumes:
+      # Read only
+      - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
+      - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      - ./application/shared:/srv/node/application/shared:ro,cached
+      - ./.prettierrc:/srv/node/application/frontend/.prettierrc:ro,cached
+      # Read write
+      - ./application/frontend:/srv/node/application/frontend:rw,cached
+    networks:
+      - network-http
+    depends_on:
+      shared:
+        condition: service_started
+    command: /bin/sh -c 'npm run dev'
+
+  shared:
+    image: node:20
+    restart: always
+    working_dir: /srv/node/application/shared
+    volumes:
+      # Read only
+      - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
+      - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      - ./.prettierrc:/srv/node/application/shared/.prettierrc:ro,cached
+      # Read write
+      - ./application/shared:/srv/node/application/shared:rw,cached
+    command: /bin/sh -c 'npm run dev'
+
+  prisma:
+    image: node:20
+    working_dir: /srv/node/application/prisma
+    volumes:
+      # Read only
+      - ./.eslintrc.js:/srv/node/.eslintrc.js:ro,cached
+      - ./tsconfig.json:/srv/node/tsconfig.json:ro,cached
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      - ./.prettierrc:/srv/node/application/prisma/.prettierrc:ro,cached
+      # Read write
+      - ./application/prisma:/srv/node/application/prisma:rw,cached
+    depends_on:
+      root:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_started
+    networks:
+      - network-database
+    command: /bin/sh -c 'npm run dev'
+
+  prisma-studio:
+    image: node:20
+    working_dir: /srv/node/application/prisma
+    environment:
+      - PRISMA_QUERY_ENGINE_BINARY=/srv/node/application/prisma/node_modules/@prisma/engines/libquery_engine-linux-arm64-openssl-3.0.x.so.node
+    volumes:
+      # Read only
+      - ./node_modules:/srv/node/node_modules:ro,cached
+      - ./application/prisma:/srv/node/application/prisma:ro,cached
+    depends_on:
+      root:
+        condition: service_completed_successfully
+      postgres:
+        condition: service_started
+    networks:
+      - network-database
+    command: /bin/sh -c 'npm run studio'
+
+networks:
+  network-database:
+  network-http:
+
+volumes:
+  postgres-data:

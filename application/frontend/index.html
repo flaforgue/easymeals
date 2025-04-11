@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-6ED7RS5M29"
+    ></script>
+    <script>
+      if (window.location.hostname === 'easymeals.fr') {
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+          dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+
+        gtag('config', 'G-6ED7RS5M29');
+      }
+    </script>
+
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/favicon.png"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <meta
+      name="description"
+      content="Retrouvez toutes vos recettes au même endroit, gérez vos menus de manière collaborative et générez vos listes de courses en quelques clics"
+    />
+    <meta
+      name="keywords"
+      content="cuisine, recette, recettes personnalisées, livre de recettes, suivi étapes réalisation recette, gain de temps, plannification de menus, partage de recettes, planificateur de repas, listes de courses en ligne, recettes en ligne, liste de courses, générer liste de courses, cocher liste de courses, ingrédient, quantité, produit, collaboration en cuisine, application de cuisine, cuisine en ligne, assistant cuisine"
+    />
+    <title>Easymeals</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script
+      type="module"
+      src="/src/main.tsx"
+    ></script>
+  </body>
+  <style>
+    :root {
+      /* React tooltip https://react-tooltip.com/docs/getting-started#styling */
+      --rt-color-white: #fff;
+      --rt-color-dark: #1e293b;
+      --rt-color-success: #16a34a;
+      --rt-color-error: #e11d48;
+      --rt-color-warning: #f0ad4e;
+      --rt-color-info: #0284c7;
+      --rt-opacity: 0.9;
+      --rt-transition-show-delay: 0.15s;
+      --rt-transition-closing-delay: 0.15s;
+    }
+  </style>
+  <script>
+    window.axeptioSettings = {
+      clientId: '6644bcad74f8eff345486a20',
+      cookiesVersion: 'easymeals-fr-EU',
+    };
+
+    (function (d, s) {
+      var t = d.getElementsByTagName(s)[0],
+        e = d.createElement(s);
+      e.async = true;
+      e.src = '//static.axept.io/sdk-slim.js';
+      t.parentNode.insertBefore(e, t);
+    })(document, 'script');
+  </script>
+</html>

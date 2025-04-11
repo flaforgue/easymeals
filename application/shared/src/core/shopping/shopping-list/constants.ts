@@ -1,0 +1,1 @@
+export const NB_SHOPPLING_LISTS_PER_PAGE = 8;

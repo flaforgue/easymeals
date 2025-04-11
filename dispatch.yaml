@@ -1,0 +1,5 @@
+dispatch:
+  - url: "easymeals.fr/api/*"
+    service: backend
+  - url: "easymeals.fr/*"
+    service: default

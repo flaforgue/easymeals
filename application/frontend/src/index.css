@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: 'quicksand';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/fonts/quicksand.ttf) format('truetype');
+  }
+
+  @font-face {
+    font-family: 'mali';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(/fonts/mali.ttf) format('truetype');
+  }
+}
+
+@media print {
+  @page {
+    size: landscape;
+    margin: 0 0 16px 0;
+  }
+}
+
+input[type='number'] {
+  appearance: textfield;
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='checkbox']:checked {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 16 12'%3E%3Cpath stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M1 5.917 5.724 10.5 15 1.5'/%3E%3C/svg%3E");
+}
+
+.react-tooltip {
+  z-index: 100;
+}
+
+summary {
+  list-style-type: none;
+}

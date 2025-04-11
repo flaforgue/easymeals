@@ -1,0 +1,23 @@
+# local env files
+.env
+docker-compose.override.yaml
+secrets/*
+application/backend/google-cloud-uploader-key.json
+
+# dependencies
+/node_modules
+/application/*/node_modules
+
+# compiled output
+/application/*/dist
+/application/*/*.tsbuildinfo
+/application/prisma/client
+
+# Logs
+npm-debug.log*
+
+# OS
+.DS_Store
+
+# IDE - VSCode
+.vscode

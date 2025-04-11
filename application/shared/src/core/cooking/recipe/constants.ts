@@ -1,0 +1,2 @@
+export const RECIPE_MAX_TOTAL_TIME = 720;
+export const FAST_RECIPE_MAX_TOTAL_TIME = 30;

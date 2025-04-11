@@ -1,0 +1,215 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+  output        = "./client"
+}
+
+datasource postgres {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  idpId     String   @unique
+  houseId   String
+  name      String?
+
+  house               House                @relation(fields: [houseId], references: [id])
+  userRecipeBookmarks UserRecipeBookmark[]
+}
+
+model House {
+  id                String   @id @default(uuid())
+  joinKey           String   @unique() @default(uuid())
+  createdAt         DateTime @default(now())
+  name              String
+  defaultNbPortions Int      @default(1)
+
+  users         User[]
+  recipes       Recipe[]
+  ingredients   Ingredient[]
+  meals         Meal[]
+  shoppingLists ShoppingList[]
+  products      Product[]
+}
+
+model Recipe {
+  id                       String   @id @default(uuid())
+  createdAt                DateTime @default(now())
+  nbPortions               Int
+  name                     String
+  illustrationUrl          String?
+  preparationTimeInMinutes Int
+  totalTimeInMinutes       Int
+  isVegetarian             Boolean
+  cuisineTypeId            String
+  houseId                  String?
+
+  house House? @relation(fields: [houseId], references: [id], onDelete: Cascade)
+
+  ingredients         RecipeIngredientPivot[]
+  cuisineType         CuisineType?            @relation(fields: [cuisineTypeId], references: [id])
+  meals               Meal[]
+  instructions        RecipeInstruction[]
+  userRecipeBookmarks UserRecipeBookmark[]
+}
+
+model UserRecipeBookmark {
+  userId   String
+  recipeId String
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
+}
+
+model RecipeInstruction {
+  id             String @id @default(uuid())
+  order          Int
+  text           String
+  timerNbMinutes Float  @default(0)
+  recipeId       String
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+}
+
+model CuisineType {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  name            String
+  illustrationUrl String
+
+  Recipe Recipe[]
+}
+
+model Unit {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  name            String
+  abbreviation    String
+  code            String   @unique()
+  illustrationUrl String
+
+  ingredients Ingredient[]
+}
+
+model IngredientCategory {
+  id              String   @id @default(uuid())
+  createdAt       DateTime @default(now())
+  name            String
+  illustrationUrl String
+
+  ingredient Ingredient[]
+}
+
+model Ingredient {
+  id                   String   @id @default(uuid())
+  createdAt            DateTime @default(now())
+  name                 String
+  unitId               String
+  isStoredInQuantity   Boolean  @default(false)
+  ingredientCategoryId String
+  houseId              String?
+
+  unit                                  Unit                                    @relation(fields: [unitId], references: [id])
+  category                              IngredientCategory                      @relation(fields: [ingredientCategoryId], references: [id], onDelete: Cascade)
+  recipes                               RecipeIngredientPivot[]
+  ShoppingListIngredientPivot           ShoppingListIngredientPivot[]
+  ShoppingListIngredientSuggestionPivot ShoppingListIngredientSuggestionPivot[]
+  house                                 House?                                  @relation(fields: [houseId], references: [id], onDelete: Cascade)
+}
+
+model RecipeIngredientPivot {
+  recipeId     String
+  ingredientId String
+  quantity     Float
+
+  ingredient Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  recipe     Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@id([recipeId, ingredientId])
+}
+
+model Meal {
+  id         String   @id @default(uuid())
+  date       DateTime
+  mealType   String
+  nbPortions Int
+  recipeId   String
+  houseId    String
+  createdAt  DateTime @default(now())
+
+  recipe Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  house  House  @relation(fields: [houseId], references: [id])
+}
+
+model ShoppingList {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  houseId   String
+
+  ingredients           ShoppingListIngredientPivot[]
+  ingredientSuggestions ShoppingListIngredientSuggestionPivot[]
+  house                 House                                   @relation(fields: [houseId], references: [id])
+  products              ShoppingListProductPivot[]
+}
+
+model ShoppingListIngredientPivot {
+  shoppingListId String
+  ingredientId   String
+  quantity       Float
+  isChecked      Boolean @default(false)
+
+  ingredient   Ingredient   @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+
+  @@id([shoppingListId, ingredientId])
+}
+
+model ShoppingListIngredientSuggestionPivot {
+  shoppingListId String
+  ingredientId   String
+  quantity       Float
+
+  ingredient   Ingredient   @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+
+  @@id([shoppingListId, ingredientId])
+}
+
+model ProductCategory {
+  id              String    @id @default(uuid())
+  createdAt       DateTime  @default(now())
+  name            String
+  illustrationUrl String
+  products        Product[]
+}
+
+model Product {
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  name              String
+  productCategoryId String
+  houseId           String?
+
+  category      ProductCategory            @relation(fields: [productCategoryId], references: [id], onDelete: Cascade)
+  shoppingLists ShoppingListProductPivot[]
+  house         House?                     @relation(fields: [houseId], references: [id], onDelete: Cascade)
+}
+
+model ShoppingListProductPivot {
+  shoppingListId String
+  productId      String
+  quantity       Float
+  isChecked      Boolean @default(false)
+
+  product      Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+
+  @@id([shoppingListId, productId])
+}

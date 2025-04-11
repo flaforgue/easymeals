@@ -1,0 +1,39 @@
+{
+  "extends": "../../tsconfig.json",
+  "references": [
+    {
+      "path": "../shared",
+    },
+    {
+      "path": "../prisma",
+    },
+  ],
+  "include": [
+    "../backend/src/**/*",
+    "../shared/src/**/*",
+    "../prisma/client/**/*",
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "baseUrl": ".",
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "rootDir": "../",
+    "outDir": "./dist",
+    "target": "ES2022",
+    "paths": {
+      "#/shared": [
+        "../shared/src"
+      ],
+      "#/prisma/client": [
+        "../prisma/client"
+      ],
+      "#/*": [
+        "./src/*"
+      ],
+    },
+  }
+}

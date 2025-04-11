@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["http://localhost:4000", "http://localhost:3000", "https://easymeals.fr"],
+    "method": ["PUT"],
+    "responseHeader": ["Content-Type", "x-goog-content-length-range"],
+    "maxAgeSeconds": 3600
+  }
+]
